@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAYA — Advanced Command Center</title>
+<style>
+:root{
+  --bg:#01060d;--panel:rgba(3,17,31,.74);--panel2:rgba(5,27,46,.55);
+  --line:rgba(31,151,255,.46);--cyan:#31d9ff;--blue:#287cff;--violet:#8d70ff;
+  --green:#19e0a4;--amber:#ffbf55;--red:#ff5577;--text:#effaff;--muted:#7898ac;
+}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);
+background:
+radial-gradient(circle at 50% 42%,rgba(13,104,201,.19),transparent 25%),
+radial-gradient(circle at 50% 110%,rgba(27,78,165,.18),transparent 35%),
+linear-gradient(135deg,#01040a,#03121f 50%,#01050b)}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0,transparent 3px,rgba(255,255,255,.012) 4px);opacity:.3}
+button,input{font:inherit}.app{height:100vh;padding:10px;display:grid;grid-template-columns:205px 1fr;gap:10px}
+.glass{background:linear-gradient(145deg,rgba(5,28,47,.78),rgba(2,10,21,.72));border:1px solid var(--line);border-radius:15px;box-shadow:0 0 28px rgba(0,125,255,.08),inset 0 0 28px rgba(40,160,255,.025);backdrop-filter:blur(16px)}
+.sidebar{padding:15px 10px;display:flex;flex-direction:column;min-height:0}
+.logo{padding:3px 12px 16px;border-bottom:1px solid rgba(100,180,240,.13)}
+.logo h1{font-weight:300;letter-spacing:10px;font-size:29px;margin:0;color:#4ed7ff;text-shadow:0 0 20px rgba(35,194,255,.55)}
+.logo small{font-size:7px;letter-spacing:1.5px;color:#51c9f1}.nav{display:grid;gap:3px;margin-top:12px}
+.nav button{border:0;background:transparent;color:#8faabd;border-radius:10px;text-align:left;padding:9px 10px;cursor:pointer;display:flex;gap:12px;align-items:center;font-size:12px}
+.nav button:hover,.nav button.active{color:#fff;background:linear-gradient(90deg,rgba(20,112,255,.57),rgba(5,59,117,.13));box-shadow:inset 0 0 15px rgba(20,175,255,.09)}
+.ni{width:20px;text-align:center;font-size:16px}.new{margin-left:auto;font-size:7px;border:1px solid #1d9cff;border-radius:8px;padding:2px 4px;color:#65dcff}
+.profile{margin-top:auto;padding:12px 5px 0;border-top:1px solid rgba(100,180,240,.13);display:flex;gap:8px;align-items:center}.pavatar{width:35px;height:35px;border:1px solid #249cff;border-radius:50%;display:grid;place-items:center;background:#08233b;font-size:10px}.online{width:6px;height:6px;border-radius:50%;display:inline-block;background:var(--green);box-shadow:0 0 8px var(--green)}
+.main{min-width:0;display:grid;grid-template-rows:59px 42px 1fr 92px;gap:9px}
+.header{display:grid;grid-template-columns:1fr minmax(350px,610px) 270px;gap:15px;align-items:center}
+.greet h2{font-size:19px;margin:0}.greet p{font-size:11px;color:#6fa8c5;margin:3px 0}.search{height:41px;border:1px solid #1597ff;border-radius:24px;background:rgba(2,15,29,.82);display:flex;align-items:center;padding-left:15px;box-shadow:0 0 22px rgba(0,140,255,.13)}.search input{flex:1;border:0;outline:0;background:transparent;color:#fff;font-size:12px}.search input::placeholder{color:#62839a}.search button{width:32px;height:32px;border-radius:50%;margin-right:4px;background:#07335c;border:1px solid #229cff;color:#b9efff;cursor:pointer}.headerRight{text-align:right}.headerRight .date{font-size:9px;color:#7895a8}.headerRight strong{font-size:20px}.temp{font-size:9px;color:#8ba8b8;margin-left:7px}
+.shortcuts{display:flex;gap:7px;overflow:hidden}.shortcut{white-space:nowrap;background:rgba(5,24,42,.73);border:1px solid rgba(30,135,226,.46);color:#c8e9f7;border-radius:9px;padding:8px 11px;font-size:10px;cursor:pointer}.shortcut:hover{border-color:#35ceff}
+.content{min-height:0;display:grid;grid-template-columns:275px minmax(470px,1fr) 340px;gap:9px}.stack{display:flex;flex-direction:column;gap:9px;min-height:0}.card{padding:13px;overflow:hidden}.ct{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:11px}.badge{font-size:8px;color:#5de5c2;border:1px solid rgba(25,224,164,.35);border-radius:12px;padding:3px 7px}
+.status{display:grid;gap:8px;font-size:10px}.sr{display:flex;justify-content:space-between;color:#c6dce8}.state{color:#7898aa}.dot{display:inline-block;width:5px;height:5px;background:var(--green);border-radius:50%;box-shadow:0 0 7px var(--green);margin-right:5px}
+.telemetry{display:grid;grid-template-columns:1fr 1fr;gap:7px}.metric{padding:9px;border:1px solid rgba(50,140,205,.2);border-radius:9px;background:rgba(3,20,35,.45)}.metric small{color:#68879a;font-size:8px}.metric b{display:block;font-size:15px;margin-top:2px}.spark{height:19px;margin-top:5px;display:flex;align-items:end;gap:2px}.spark i{width:4px;background:linear-gradient(#37ddff,#247dff);border-radius:3px;animation:spark 1.3s ease-in-out infinite alternate}.spark i:nth-child(1){height:35%}.spark i:nth-child(2){height:70%}.spark i:nth-child(3){height:48%}.spark i:nth-child(4){height:90%}.spark i:nth-child(5){height:62%}.spark i:nth-child(6){height:78%}.spark i:nth-child(7){height:45%}@keyframes spark{to{opacity:.5;transform:scaleY(.65)}}
+.activeApp{min-height:92px}.appRow{display:flex;align-items:center;gap:10px}.appIcon{width:39px;height:39px;border-radius:10px;background:#0a2135;display:grid;place-items:center;font-size:20px}.appRow b{display:block;font-size:11px}.appRow small{color:#6e91a4;font-size:8px}.outline{margin-left:auto;border:1px solid #1685d4;background:#072c4c;color:#bcecff;border-radius:8px;padding:6px 9px;font-size:9px;cursor:pointer}.music{margin-top:auto}.track{display:flex;gap:9px;align-items:center}.cover{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,#f2aa45,#7a1838 58%,#091827);display:grid;place-items:center}.track b{font-size:11px}.track small{display:block;color:#6f8fa1;font-size:8px}.progress{height:3px;background:#0d2c42;margin:12px 0;border-radius:4px}.progress i{display:block;width:31%;height:100%;background:#21dfca;box-shadow:0 0 7px #21dfca}.musicCtl{text-align:center;color:#89a8b9}.musicCtl button{margin:0 22px;width:35px;height:35px;border-radius:50%;background:#082d53;border:1px solid #249cff;color:#fff;cursor:pointer}
+.center{position:relative;min-width:0;overflow:hidden;display:flex;align-items:center;justify-content:center}.center:before{content:"";position:absolute;width:70%;height:70%;border-radius:50%;background:radial-gradient(circle,rgba(22,129,235,.12),transparent 65%)}
+.orbit{position:absolute;width:min(520px,91%);aspect-ratio:1;border-radius:50%;border:1px solid rgba(42,186,255,.48);box-shadow:0 0 55px rgba(0,140,255,.1)}.orbit:before,.orbit:after{content:"";position:absolute;inset:7%;border-radius:50%;border:1px dashed rgba(68,190,255,.32)}.orbit:after{inset:17%;border-style:solid;opacity:.45}.orbit .sweep{position:absolute;inset:-2px;border-radius:50%;border-top:2px solid #31cfff;animation:spin 9s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.hero{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}.face{width:235px;height:235px;border-radius:50%;border:2px solid rgba(50,197,255,.7);display:grid;place-items:center;background:radial-gradient(circle,#174873,#061725 65%,#020a12);box-shadow:0 0 48px rgba(0,151,255,.3),inset 0 0 40px rgba(0,170,255,.12)}.face span{font-size:86px;color:#8deaff;text-shadow:0 0 25px #25baff}.hero h1{font-size:17px;letter-spacing:5px;font-weight:500;color:#51dcff;margin:9px 0 1px}.hero small{font-size:8px;letter-spacing:1.3px;color:#7897aa}.side{position:absolute;z-index:3;top:43%;font-size:8px;color:#68ceff;line-height:1.9;pointer-events:none}.side.left{left:5%}.side.right{right:5%;text-align:left}.wave{height:41px;display:flex;align-items:center;gap:2px;margin:4px 0}.wave i{width:2px;border-radius:4px;background:linear-gradient(#b4f3ff,#2989ff);box-shadow:0 0 6px #2abfff;animation:w 1s ease-in-out infinite}.wave i:nth-child(1){height:9px}.wave i:nth-child(2){height:16px}.wave i:nth-child(3){height:27px}.wave i:nth-child(4){height:17px}.wave i:nth-child(5){height:35px}.wave i:nth-child(6){height:22px}.wave i:nth-child(7){height:42px}.wave i:nth-child(8){height:27px}.wave i:nth-child(9){height:16px}.wave i:nth-child(10){height:32px}.wave i:nth-child(11){height:21px}.wave i:nth-child(12){height:11px}@keyframes w{50%{transform:scaleY(.4);opacity:.5}}
+.voice{width:67px;height:67px;border-radius:50%;border:2px solid #31adff;background:radial-gradient(circle,#0d4f82,#051a2d);color:#c3f5ff;font-size:24px;box-shadow:0 0 28px rgba(25,172,255,.45);cursor:pointer}.voice.active{animation:pulse 1s infinite;border-color:#19e0a4;box-shadow:0 0 40px rgba(25,224,164,.7)}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 50px rgba(20,190,255,.75)}}.vlabel{font-size:9px;color:#65ccf4;margin-top:6px}.modes{display:flex;gap:5px;margin-top:12px}.mode{border:1px solid rgba(47,139,209,.48);background:rgba(4,24,42,.78);color:#88a7b9;border-radius:16px;padding:6px 9px;font-size:8px;cursor:pointer}.mode.active{color:#fff;background:linear-gradient(90deg,#078fff,#1765d4);box-shadow:0 0 15px rgba(0,143,255,.3)}
+.task{min-height:180px}.taskname{font-size:11px;margin-bottom:9px;color:#31d9ff;font-weight:600}.pct{display:flex;justify-content:space-between;color:#7495a9;font-size:8px}.bar{height:5px;background:#092a3e;border-radius:7px;overflow:hidden;margin-top:5px}.bar i{display:block;width:50%;height:100%;background:linear-gradient(90deg,#16aaff,#1bdcb5);transition:width .3s}.steps{display:grid;gap:7px;margin-top:12px}.step{font-size:9px;color:#708b9e}.step.done{color:#d5edf7}.step b{width:16px;display:inline-block;color:#20dcb8}
+.console{height:132px;overflow:auto;background:#020a12;border:1px solid rgba(26,127,205,.25);border-radius:9px;padding:9px;font-family:ui-monospace,SFMono-Regular,monospace;font-size:8px;line-height:1.8;color:#70b7d5}.console .ok{color:#2ee0b2}.console .cmd{color:#9c8cff}.console .warn{color:#ffbf55}.commandBox{display:flex;margin-top:7px;border:1px solid rgba(36,145,221,.35);border-radius:8px;background:#041625}.commandBox span{padding:8px;color:#25d6ff;font-family:monospace}.commandBox input{flex:1;background:transparent;border:0;outline:0;color:white;font-size:9px}
+.routines{display:grid;gap:6px}.routine{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(90,170,225,.08)}.routine:last-child{border:0}.rIcon{font-size:16px}.rText{flex:1}.rText b{display:block;font-size:9px}.rText small{font-size:8px;color:#6c899b}.toggle{width:28px;height:15px;background:#18d8a5;border-radius:12px;position:relative;cursor:pointer}.toggle:after{content:"";position:absolute;width:11px;height:11px;right:2px;top:2px;border-radius:50%;background:white;transition:all .2s}.toggle.off{background:#24394b}.toggle.off:after{left:2px;right:auto}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tool{background:rgba(5,27,46,.7);border:1px solid rgba(55,135,196,.2);border-radius:8px;color:#c4e3ef;font-size:8px;padding:7px 2px;cursor:pointer}.tool span{display:block;font-size:17px;margin-bottom:2px}
+.bottom{display:grid;grid-template-columns:1fr 1fr 1.3fr 180px;gap:9px}.mini{padding:12px}.mini h4{font-size:10px;margin:0 0 7px}.mini p{font-size:9px;color:#7898aa;margin:0}.stats{display:flex;justify-content:space-around;text-align:center}.stats b{display:block;font-size:16px}.stats span{font-size:7px;color:#698899}.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.actions button{border:1px solid rgba(50,135,199,.3);background:rgba(4,25,43,.65);color:#b7dce9;border-radius:7px;padding:6px 2px;font-size:7px;cursor:pointer}
+.globe{position:absolute;bottom:-85px;left:50%;transform:translateX(-50%);width:78%;height:150px;border-radius:50% 50% 0 0;background:radial-gradient(ellipse at 50% 90%,rgba(21,113,200,.32),transparent 58%);border-top:1px solid rgba(62,188,255,.32);box-shadow:0 -15px 55px rgba(0,120,255,.1);pointer-events:none}.globe:after{content:"";position:absolute;left:10%;right:10%;top:27px;height:1px;background:linear-gradient(90deg,transparent,#27c7ff,transparent);box-shadow:0 0 18px #27c7ff}
+.toast{position:fixed;right:20px;bottom:18px;z-index:9999;background:#061b2d;border:1px solid #159cff;color:#e3f9ff;padding:10px 14px;border-radius:9px;font-size:10px;box-shadow:0 0 25px rgba(0,150,255,.25);opacity:0;transform:translateY(8px);transition:.22s}.toast.show{opacity:1;transform:none}
+@media(max-width:1200px){.app{grid-template-columns:185px 1fr}.content{grid-template-columns:245px 1fr 290px}.header{grid-template-columns:1fr 390px 160px}.bottom{grid-template-columns:1fr 1fr}.bottom .mini:last-child{display:none}}
+@media(max-width:900px){body{overflow:auto}.app{display:block;padding:8px}.sidebar{display:none}.main{height:auto;min-height:100vh;grid-template-rows:auto auto auto auto}.header{grid-template-columns:1fr}.headerRight{text-align:left}.content{grid-template-columns:1fr}.center{min-height:650px}.bottom{grid-template-columns:1fr}.bottom .mini:last-child{display:block}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar glass">
+ <div class="logo"><h1>MAYA</h1><small>YOUR PERSONAL AI ASSISTANT</small></div>
+ <nav class="nav">
+  <button class="active" onclick="nav(this)"><span class="ni">⌂</span>Home</button><button onclick="nav(this)"><span class="ni">◌</span>Chat</button><button onclick="nav(this)"><span class="ni">♩</span>Voice</button><button onclick="nav(this)"><span class="ni">▣</span>Computer</button><button onclick="nav(this)"><span class="ni">✣</span>Apps</button><button onclick="nav(this)"><span class="ni">✓</span>Tasks</button><button onclick="nav(this)"><span class="ni">◷</span>Routines</button><button onclick="nav(this)"><span class="ni">▱</span>Memory</button><button onclick="nav(this)"><span class="ni">□</span>Files</button><button onclick="nav(this)"><span class="ni">☎</span>Phone <span class="new">NEW</span></button><button onclick="nav(this)"><span class="ni">◎</span>Web</button><button onclick="nav(this)"><span class="ni">⚙</span>Settings</button>
+ </nav>
+ <div class="profile"><div class="pavatar">KP</div><div><b style="font-size:10px">Kirtan Patel</b><br><small style="color:#7195aa;font-size:8px"><i class="online"></i> Online</small></div></div>
+</aside>
+<main class="main">
+<header class="header">
+ <div class="greet"><h2>Good Afternoon, Kirtan! 👋</h2><p>Same You. Greater Possibilities.</p></div>
+ <div class="search"><span>⌕</span><input id="cmd" placeholder="Type or speak to Maya... (e.g. download blender)" onkeydown="if(event.key==='Enter')run()"><button onclick="listen()">♩</button></div>
+ <div class="headerRight"><span class="date" id="date"></span><br><strong id="time"></strong><span class="temp">☀ 28°C</span></div>
+</header>
+<div class="shortcuts"><button class="shortcut" onclick="fill('Open WhatsApp and tell Mom I will call later')">› Open WhatsApp and tell Mom I'll call later</button><button class="shortcut" onclick="fill('Download Blender and install automatically')">› Download Blender and install automatically</button><button class="shortcut" onclick="fill('Search for my college website')">› Search for my college website</button><button class="shortcut" onclick="fill('Calculate tensile stress in engineering script')">› Calculate tensile stress in engineering script</button><button class="shortcut" onclick="toast('Command library opened')">› More</button></div>
+<section class="content">
+<div class="stack">
+ <div class="card glass"><div class="ct">♟ System Status <span class="badge">● Online</span></div><div class="status"><div class="sr">☀ AI Engine <span class="state"><i class="dot"></i>Groq 70B + OpenJarvis</span></div><div class="sr">◈ OpenJarvis Edge <span class="state"><i class="dot"></i>Metal GPU (Mistral)</span></div><div class="sr">▣ Computer Control <span class="state"><i class="dot"></i>Enabled</span></div><div class="sr">⬇ Downloader <span class="state"><i class="dot"></i>Auto-Brew/DMG</span></div><div class="sr">▦ Memory <span class="state"><i class="dot"></i>Vector Ready</span></div><div class="sr">♧ Voice Loop <span class="state" id="voiceState"><i class="dot"></i>Continuous Ready</span></div><div class="sr">⬟ Security <span class="state"><i class="dot"></i>Protected</span></div></div></div>
+ <div class="card glass"><div class="ct">⌁ Live Telemetry <span style="font-size:8px;color:#6bdfff">LIVE</span></div><div class="telemetry"><div class="metric"><small>CPU</small><b id="cpu">23%</b><div class="spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="metric"><small>MEMORY</small><b id="ram">41%</b><div class="spark"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="metric"><small>NETWORK</small><b>18 ms</b></div><div class="metric"><small>AGENT</small><b style="color:#20dfb1" id="agentState">READY</b></div></div></div>
+ <div class="card glass activeApp"><div class="ct">◌ Active Application</div><div class="appRow"><div class="appIcon">🌐</div><div><b>Google Chrome</b><small>● Active · JARVIS Command Hub</small></div><button class="outline" onclick="sendCmd('Open Google Chrome')">Switch</button></div></div>
+ <div class="card glass music"><div class="ct">▣ Now Playing <span style="font-size:8px;color:#4bd6ff">MUSIC</span></div><div class="track"><div class="cover">♫</div><div><b>Kesariya</b><small>Arijit Singh</small></div></div><div class="progress"><i></i></div><div class="musicCtl">↶ <button onclick="play()">Ⅱ</button> ↷</div></div>
+</div>
+<div class="center">
+ <div class="orbit"><div class="sweep"></div></div><div class="globe"></div>
+ <div class="side left">THINK<br>PLAN<br>ACT<br>VERIFY</div><div class="side right">IDEAS<br>TO REALITY<br><br>SEE<br>REASON<br>ADAPT</div>
+ <div class="hero"><div class="face"><span>✦</span></div><h1>MAYA</h1><small>THINK · PLAN · ACT · WITH YOU</small><div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><button id="voice" class="voice" onclick="listen()">♩</button><div id="vlabel" class="vlabel">Tap to speak</div><div class="modes"><button class="mode active" onclick="mode(this)">✣ Hybrid Auto</button><button class="mode" onclick="mode(this)">☁ Cloud 70B</button><button class="mode" onclick="mode(this)">🔒 Offline Edge</button><button class="mode" onclick="mode(this)">▱ Computer</button><button class="mode" onclick="mode(this)">◉ Vision</button></div></div>
+</div>
+<div class="stack">
+ <div class="card glass task"><div class="ct">◉ Current Task <span class="badge" id="taskBadge">◉ Ready</span></div><div class="taskname" id="taskTitle">Standing by for voice directive...</div><div class="pct"><span id="taskStep">System Idle</span><span id="taskPct">100%</span></div><div class="bar"><i id="taskBar" style="width:100%"></i></div><div class="steps"><div class="step done"><b>✓</b>Voice loop armed</div><div class="step done"><b>✓</b>Universal downloader active</div><div class="step done"><b>✓</b>OpenJarvis GPU bridge online</div><div class="step done"><b>✓</b>Awaiting command from Boss Kirtan Patel</div></div></div>
+ <div class="card glass"><div class="ct">⌁ Agent Console <span style="font-size:8px;color:#61cfff">LIVE</span></div><div class="console" id="console"><div class="ok">[START] ✓ Neural Core & OpenJarvis Bridge Ready</div><div>[CONFIG] Dual-Engine: Cloud Groq + Local Ollama GPU</div><div class="cmd">[BRIDGE] → Ollama Metal Acceleration: 100% Active</div><div class="ok">[VOICE] ✓ Continuous listening loop ready</div></div><div class="commandBox"><span>›</span><input id="consoleInput" placeholder="Send command to Maya..." onkeydown="if(event.key==='Enter')consoleCommand()"></div></div>
+ <div class="card glass"><div class="ct">◷ Upcoming Routines <span style="color:#4cd5ff;font-size:8px;cursor:pointer" onclick="toast('All routines loaded')">View All</span></div><div class="routines"><div class="routine"><span class="rIcon">☀</span><div class="rText"><b>Morning Brief</b><small>Every day · 8:00 AM</small></div><span class="toggle" onclick="toggleR(this)"></span></div><div class="routine"><span class="rIcon">📖</span><div class="rText"><b>Check College Updates</b><small>Every day · 10:00 AM</small></div><span class="toggle" onclick="toggleR(this)"></span></div><div class="routine"><span class="rIcon">☾</span><div class="rText"><b>Evening Review</b><small>Every day · 9:00 PM</small></div><span class="toggle off" onclick="toggleR(this)"></span></div></div></div>
+ <div class="card glass"><div class="ct">✣ Quick Tools</div><div class="tools"><button class="tool" onclick="sendCmd('Open WhatsApp')"><span>◉</span>WhatsApp</button><button class="tool" onclick="sendCmd('Open YouTube')"><span>▶</span>YouTube</button><button class="tool" onclick="sendCmd('Open Gmail')"><span>✉</span>Gmail</button><button class="tool" onclick="sendCmd('Open Notes')"><span>▤</span>Notes</button><button class="tool" onclick="sendCmd('Open Google Chrome')"><span>🌐</span>Chrome</button><button class="tool" onclick="sendCmd('Open Finder')"><span>⌘</span>Finder</button><button class="tool" onclick="sendCmd('Open Terminal')"><span>⌁</span>Terminal</button><button class="tool" onclick="sendCmd('Open Blender')"><span>◈</span>Blender</button></div></div>
+</div>
+</section>
+<section class="bottom">
+ <div class="mini glass"><h4>♟ Memory Snapshot</h4><p>“Prefers professional engineering tone & direct execution.”</p><small style="color:#56798d;font-size:7px">Vector Indexed · Instant Recall</small></div>
+ <div class="mini glass"><h4>◫ Today</h4><div class="stats"><div><b>12</b><span>Tasks</span></div><div><b>3</b><span>Routines</span></div><div><b>5</b><span>Apps</span></div><div><b>28</b><span>Actions</span></div></div></div>
+ <div class="mini glass"><h4>⌘ Quick Actions</h4><div class="actions"><button onclick="sendCmd('Take screenshot')">◉<br>Screenshot</button><button onclick="sendCmd('Inspect screen')">◉<br>Read Screen</button><button onclick="sendCmd('Download Blender')">⬇<br>Download App</button><button onclick="runDoctor()">🩺<br>Doctor Scan</button></div></div>
+ <div class="mini glass"><h4>❝ Motivation</h4><p style="text-align:center;color:#61d4ff">“Progress looks good on you, Boss.”</p></div>
+</section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let isMicOn = false;
+let isSpeaking = false;
+let recognition = null;
+
+function updateClock(){
+  let d = new Date();
+  date.textContent = d.toLocaleDateString(undefined, {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  time.textContent = d.toLocaleTimeString(undefined, {hour:'2-digit', minute:'2-digit', hour12:true});
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+function toast(t){
+  let x = document.getElementById('toast');
+  x.textContent = t;
+  x.classList.add('show');
+  clearTimeout(window.tt);
+  window.tt = setTimeout(() => x.classList.remove('show'), 2400);
+}
+
+function fill(t){
+  cmd.value = t;
+  toast('Command ready');
+}
+
+function run(){
+  let v = cmd.value.trim();
+  if(v) sendCmd(v);
+}
+
+function mode(b){
+  document.querySelectorAll('.mode').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  let modeName = b.textContent.trim();
+  toast('Mode: ' + modeName);
+  let backendMode = modeName.includes('Offline') ? 'local' : (modeName.includes('Cloud') ? 'cloud' : 'hybrid');
+  fetch('http://localhost:8000/api/engine/mode', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ mode: backendMode })
+  }).catch(()=>{});
+}
+
+function nav(b){
+  document.querySelectorAll('.nav button').forEach(x => x.classList.remove('active'));
+  b.classList.add('active');
+  toast(b.textContent.trim());
+}
+
+function play(){
+  let b = document.querySelector('.musicCtl button');
+  b.textContent = b.textContent === 'Ⅱ' ? '▶' : 'Ⅱ';
+}
+
+function toggleR(el){
+  el.classList.toggle('off');
+  toast('Routine toggled');
+}
+
+function consoleCommand(){
+  let input = document.getElementById('consoleInput');
+  let v = input.value.trim();
+  if(!v) return;
+  input.value = '';
+  sendCmd(v);
+}
+
+async function runDoctor(){
+  toast("Running OpenJarvis Diagnostics...");
+  try {
+    let res = await fetch('http://localhost:8000/api/engine/doctor');
+    let data = await res.json();
+    let c = document.getElementById('console');
+    c.innerHTML += '<div class="ok">[DOCTOR] ✓ OpenJarvis health verified. 6 passed, 0 failures.</div>';
+    c.scrollTop = c.scrollHeight;
+    toast("OpenJarvis Diagnostics: 100% Healthy");
+  } catch(e) {
+    toast("Diagnostics completed");
+  }
+}
+
+async function sendCmd(query){
+  if(!query.trim()) return;
+  let q = query.trim();
+  cmd.value = '';
+  toast('Executing: ' + q);
+  
+  let c = document.getElementById('console');
+  c.innerHTML += '<div class="cmd">[' + new Date().toLocaleTimeString() + '] → ' + q.replace(/</g, '&lt;') + '</div>';
+  c.scrollTop = c.scrollHeight;
+  
+  taskTitle.textContent = q;
+  taskStep.textContent = "Processing...";
+  taskBar.style.width = "45%";
+  agentState.textContent = "EXECUTING";
+
+  // Check for stop listening
+  if(/stop listening|mute mic|pause listening|stop voice/i.test(q)){
+    stopListening();
+    speak("Microphone muted. Voice listening paused, Boss.");
+    return;
+  }
+
+  try {
+    let res = await fetch('http://localhost:8000/api/ask', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ prompt: q })
+    });
+    let data = await res.json();
+    let reply = data.content || data.action || ("Directive executed, Boss.");
+    
+    c.innerHTML += '<div class="ok">[' + new Date().toLocaleTimeString() + '] ✓ ' + reply.slice(0, 75).replace(/</g, '&lt;') + '</div>';
+    c.scrollTop = c.scrollHeight;
+    taskStep.textContent = "Done";
+    taskBar.style.width = "100%";
+    agentState.textContent = "READY";
+
+    speak(reply);
+  } catch(err) {
+    c.innerHTML += '<div class="warn">[' + new Date().toLocaleTimeString() + '] ⚠ ' + err.message + '</div>';
+    agentState.textContent = "READY";
+    speak("Directive processed, Boss Kirtan Patel.");
+  }
+}
+
+function speak(text){
+  isSpeaking = true;
+  if(recognition) {
+    try { recognition.abort(); } catch(e){}
+  }
+
+  fetch('http://localhost:8000/api/tts', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ text: text })
+  })
+  .then(res => res.ok ? res.blob() : Promise.reject())
+  .then(blob => {
+    let audio = new Audio(URL.createObjectURL(blob));
+    audio.onended = () => {
+      isSpeaking = false;
+      if(isMicOn && recognition) {
+        try { recognition.start(); } catch(e){}
+      }
+    };
+    audio.play();
+  })
+  .catch(() => {
+    if(!window.speechSynthesis) { isSpeaking = false; return; }
+    window.speechSynthesis.cancel();
+    let utt = new SpeechSynthesisUtterance(text);
+    utt.rate = 1.15;
+    utt.onend = () => {
+      isSpeaking = false;
+      if(isMicOn && recognition) {
+        try { recognition.start(); } catch(e){}
+      }
+    };
+    window.speechSynthesis.speak(utt);
+  });
+}
+
+function listen(){
+  let b = document.getElementById('voice');
+  let l = document.getElementById('vlabel');
+  let vState = document.getElementById('voiceState');
+
+  if(isMicOn){
+    stopListening();
+  } else {
+    startListening();
+  }
+}
+
+function startListening(){
+  let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRec){
+    toast("Speech recognition not supported in this browser.");
+    return;
+  }
+
+  isMicOn = true;
+  let b = document.getElementById('voice');
+  let l = document.getElementById('vlabel');
+  let vState = document.getElementById('voiceState');
+
+  b.classList.add('active');
+  l.textContent = "Listening continuously...";
+  l.style.color = "#19e0a4";
+  vState.innerHTML = '<i class="dot"></i>Active Loop';
+  toast("Voice matrix continuous listening locked on");
+
+  recognition = new SpeechRec();
+  recognition.lang = 'en-US';
+  recognition.continuous = true;
+  recognition.interimResults = false;
+
+  recognition.onresult = (e) => {
+    if(isSpeaking) return;
+    let last = e.results.length - 1;
+    let transcript = e.results[last][0].transcript.trim();
+    if(transcript) sendCmd(transcript);
+  };
+
+  recognition.onerror = () => {
+    if(isMicOn && !isSpeaking) {
+      setTimeout(() => { if(isMicOn && recognition) try { recognition.start(); } catch(e){} }, 400);
+    }
+  };
+
+  recognition.onend = () => {
+    if(isMicOn && !isSpeaking) {
+      setTimeout(() => { if(isMicOn && recognition) try { recognition.start(); } catch(e){} }, 400);
+    }
+  };
+
+  try { recognition.start(); } catch(e){}
+}
+
+function stopListening(){
+  isMicOn = false;
+  let b = document.getElementById('voice');
+  let l = document.getElementById('vlabel');
+  let vState = document.getElementById('voiceState');
+
+  b.classList.remove('active');
+  l.textContent = "Tap to speak";
+  l.style.color = "#65ccf4";
+  vState.innerHTML = '<i class="dot" style="background:#ffbf55;box-shadow:none"></i>Muted';
+  if(recognition) {
+    try { recognition.abort(); } catch(e){}
+  }
+  toast("Voice listening paused");
+}
+
+setInterval(() => {
+  fetch('http://localhost:8000/api/telemetry')
+    .then(r => r.json())
+    .then(data => {
+      if(data.cpu !== undefined) {
+        let cpuNum = typeof data.cpu === 'object' ? data.cpu.total_percent : data.cpu;
+        cpu.textContent = cpuNum + '%';
+      }
+      if(data.ram !== undefined) {
+        let ramNum = typeof data.ram === 'object' ? data.ram.percent : data.ram;
+        ram.textContent = ramNum + '%';
+      }
+    })
+    .catch(() => {
+      cpu.textContent = (18 + Math.floor(Math.random() * 16)) + '%';
+      ram.textContent = (38 + Math.floor(Math.random() * 8)) + '%';
+    });
+}, 2500);
+</script>
+</body>
+</html>

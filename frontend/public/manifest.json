@@ -1,0 +1,10 @@
+{
+  "name": "J.A.R.V.I.S. Mobile HUD",
+  "short_name": "J.A.R.V.I.S.",
+  "description": "Stark Iron Man Holographic Visual HUD & Voice Assistant",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#030712",
+  "orientation": "portrait"
+}
