@@ -1,8 +1,8 @@
 import os
 import zipfile
 
-SOURCE_DIR = "/Users/kirtanpatel/JARVIS-REAL"
-DEST_ZIP = "/Users/kirtanpatel/Desktop/JARVIS_MAYA_CODEBASE.zip"
+SOURCE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEST_ZIP = os.path.expanduser("~/Desktop/JARVIS_MAYA_CODEBASE.zip")
 
 EXCLUDE_DIRS = {
     "node_modules", ".next", "__pycache__", ".git", ".venv", 

@@ -21,7 +21,9 @@ echo "=================================================="
 # Ensure OpenJarvis / Ollama daemon is running
 if ! curl -s http://127.0.0.1:11434/api/tags > /dev/null 2>&1; then
     echo "[OPENJARVIS] Starting background Ollama Metal GPU daemon..."
-    ollama serve > /Users/kirtanpatel/.openjarvis/ollama_serve.log 2>&1 &
+    LOG_DIR="${HOME}/.openjarvis"
+    mkdir -p "$LOG_DIR"
+    ollama serve > "$LOG_DIR/ollama_serve.log" 2>&1 &
     sleep 2
 fi
 
