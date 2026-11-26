@@ -1,4 +1,4 @@
-# MAYA — Tactical AI Assistant & Autonomous Command Deck
+# J.A.R.V.I.S. & M.A.Y.A. — Autonomous AI Companion & Tactical Command Deck
 
 A modern, full-stack autonomous AI desktop companion and web command center. Engineered for local performance, resilient hybrid model execution, voice interaction, and desktop task automation.
 
@@ -46,24 +46,30 @@ A modern, full-stack autonomous AI desktop companion and web command center. Eng
 
 ### Setup
 
-1. Install Python dependencies:
+1. Clone repository:
+   ```bash
+   git clone https://github.com/Kirtanpatel2326/jarvis-maya.git
+   cd jarvis-maya
+   ```
+
+2. Install Python dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. Install frontend dependencies:
+3. Install frontend dependencies:
    ```bash
    cd frontend
    npm install
    cd ..
    ```
 
-3. Configure environment:
+4. Configure environment:
    ```bash
    cp .env.example backend/.env
    ```
 
-4. Launch services:
+5. Launch services:
    ```bash
    chmod +x start.sh
    ./start.sh
