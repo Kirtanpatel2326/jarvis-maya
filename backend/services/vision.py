@@ -12,7 +12,6 @@ VISION_STATE = {
 }
 
 def toggle_vision_tracking(target_object: str = "pickleball") -> str:
-    global VISION_STATE
     target_lower = target_object.lower().strip()
     
     if target_lower in ["off", "stop", "disable"]:
